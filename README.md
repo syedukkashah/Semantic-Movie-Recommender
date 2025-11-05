@@ -18,9 +18,9 @@ Instead of collaborative filtering or content-based ML, we use **rule-based reas
 
 ## Tech Stack
 
-| Technology | Purpose |
-|----------|--------|
-| **OWL (Protégé)** | Define `Movie`, `Emotion`, `User` ontology |
-| **RDF / Turtle** | Store movie-emotion triples |
-| **SPARQL (Jena Fuseki)** | Query the knowledge graph |
-| **Prolog (SWI-Prolog)** | Forward/backward chaining, rules |
+|Technology|
+|----------|
+| **OWL (Protégé)** 
+| **RDF / Turtle** 
+| **SPARQL (Jena Fuseki)** 
+| **Prolog (SWI-Prolog)** 
