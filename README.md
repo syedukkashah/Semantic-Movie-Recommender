@@ -1,8 +1,7 @@
 # EmoRec: Semantic Movie Recommender Using Emotion Knowledge Graphs
 
 ## Project Overview
-
-Instead of collaborative filtering or content-based ML, we use **rule-based reasoning over a knowledge graph** to:
+ **rule-based reasoning over a knowledge graph**:
 - Represent movies and emotions semantically
 - Explain **why** a movie was recommended
 
