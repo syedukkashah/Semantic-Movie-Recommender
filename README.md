@@ -4,7 +4,6 @@
 
 Instead of collaborative filtering or content-based ML, we use **rule-based reasoning over a knowledge graph** to:
 - Represent movies and emotions semantically
-- Infer recommendations using **forward/backward chaining**
 - Explain **why** a movie was recommended
 
 ---
