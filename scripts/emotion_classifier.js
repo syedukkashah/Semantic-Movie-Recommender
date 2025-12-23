@@ -226,8 +226,7 @@ function classifyEmotion(reviewText) {
   const emotionProbs = Object.values(emotionProbabilities).sort(
     (a, b) => b - a
   );
-  const confidence =
-    emotionProbs[0] - (emotionProbs[1] || 0) > 0.1 ? 0.9 : 0.7; // High if gap > 0.1
+  const confidence = emotionProbs[0] - (emotionProbs[1] || 0) > 0.1 ? 0.9 : 0.7; // High if gap > 0.1
 
   return {
     dominantEmotion,
@@ -267,8 +266,9 @@ function aggregateEmotions(classificationResults) {
     }
   }
 
-  const votePercentage =
-    Math.round((maxVotes / classificationResults.length) * 100);
+  const votePercentage = Math.round(
+    (maxVotes / classificationResults.length) * 100
+  );
 
   return {
     aggregatedEmotion,

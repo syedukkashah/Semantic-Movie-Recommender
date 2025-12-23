@@ -35,7 +35,9 @@ console.log("=".repeat(60));
 console.log("\n🎬 Step 2: Aggregating emotions across all reviews...\n");
 const aggregation = aggregateEmotions(classifications);
 
-console.log(`Aggregated Emotion: ${aggregation.aggregatedEmotion.toUpperCase()}`);
+console.log(
+  `Aggregated Emotion: ${aggregation.aggregatedEmotion.toUpperCase()}`
+);
 console.log(`Vote Percentage: ${aggregation.votePercentage}%`);
 console.log(`Average Intensity: ${aggregation.averageIntensity}`);
 console.log(`Average Confidence: ${aggregation.averageConfidence}`);
@@ -64,4 +66,8 @@ fs.writeFileSync(outputPath, rdfContent, "utf-8");
 
 console.log("\n=".repeat(60));
 console.log(`✅ Test complete! RDF written to: ${outputPath}`);
-console.log(`   Statistics: ${rdfGenerator.getStats().moviesProcessed} movie(s), ${rdfGenerator.getStats().emotionsAnalyzed} emotions, ${rdfGenerator.getStats().triplesGenerated} triples`);
+console.log(
+  `   Statistics: ${rdfGenerator.getStats().moviesProcessed} movie(s), ${
+    rdfGenerator.getStats().emotionsAnalyzed
+  } emotions, ${rdfGenerator.getStats().triplesGenerated} triples`
+);

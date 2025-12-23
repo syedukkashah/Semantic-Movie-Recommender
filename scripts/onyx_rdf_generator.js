@@ -40,7 +40,12 @@ class OnyxRDFGenerator {
    * @param {array} reviewClassifications - Array of emotion classifications
    * @param {object} aggregation - Aggregated emotion results
    */
-  generateMovieEmotionRDF(movieId, movieTitle, reviewClassifications, aggregation) {
+  generateMovieEmotionRDF(
+    movieId,
+    movieTitle,
+    reviewClassifications,
+    aggregation
+  ) {
     const movieUri = `${this.namespaces.movie}${movieId}`;
     const emotionSetUri = `${this.namespaces.emotion}set_${movieId}`;
 
@@ -78,7 +83,9 @@ class OnyxRDFGenerator {
     );
 
     // Emotion category (e.g., onyx:Joy)
-    const emotionCategory = `${this.namespaces.onyx}${this._capitalizeFirstLetter(aggregation.aggregatedEmotion)}`;
+    const emotionCategory = `${
+      this.namespaces.onyx
+    }${this._capitalizeFirstLetter(aggregation.aggregatedEmotion)}`;
     this.addTriple(
       `<${aggregatedEmotionUri}>`,
       `${this.namespaces.onyx}hasEmotionCategory`,
@@ -137,7 +144,9 @@ class OnyxRDFGenerator {
         "a",
         `${this.namespaces.onyx}Emotion`
       );
-      const reviewEmotionCat = `${this.namespaces.onyx}${this._capitalizeFirstLetter(classification.dominantEmotion)}`;
+      const reviewEmotionCat = `${
+        this.namespaces.onyx
+      }${this._capitalizeFirstLetter(classification.dominantEmotion)}`;
       this.addTriple(
         `<${reviewEmotionUri}>`,
         `${this.namespaces.onyx}hasEmotionCategory`,
@@ -200,7 +209,9 @@ class OnyxRDFGenerator {
     const content = this.generateTurtle();
     fs.writeFileSync(filePath, content, "utf-8");
     console.log(`✅ RDF document written to ${filePath}`);
-    console.log(`   Movies: ${this.movieCount} | Emotions: ${this.emotionCount}`);
+    console.log(
+      `   Movies: ${this.movieCount} | Emotions: ${this.emotionCount}`
+    );
   }
 
   /**

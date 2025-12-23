@@ -117,7 +117,11 @@ async function scrapeMovieReviews(movieIds) {
         // Display individual emotion classifications
         classificationResults.forEach((result, i) => {
           console.log(
-            `   [${i + 1}] ${result.dominantEmotion.toUpperCase()} (intensity: ${result.intensity}, confidence: ${result.confidence})`
+            `   [${
+              i + 1
+            }] ${result.dominantEmotion.toUpperCase()} (intensity: ${
+              result.intensity
+            }, confidence: ${result.confidence})`
           );
         });
 
