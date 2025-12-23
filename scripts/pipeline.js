@@ -1,8 +1,9 @@
 const axios = require("axios");
 const puppeteer = require("puppeteer");
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const Sentiment = require("sentiment");
-const sentiment = new Sentiment();
+const { classifyEmotion, aggregateEmotions } = require("./emotion_classifier");
+const OnyxRDFGenerator = require("./onyx_rdf_generator");
+const path = require("path");
 // ===== STEP 1: Query Wikidata =====
 async function queryWikidataMovies(filterQuery) {
   const sparqlQuery = `
@@ -55,10 +56,13 @@ async function queryWikidataMovies(filterQuery) {
 async function scrapeMovieReviews(movieIds) {
   if (movieIds.length === 0) {
     console.log("No movie IDs to scrape.");
-    return;
+    return [];
   }
 
   const browser = await puppeteer.launch({ headless: true });
+  const rdfGenerator = new OnyxRDFGenerator();
+  const moviesData = [];
+
   console.log(
     `\n📺 Starting review scraper for ${movieIds.length} movies...\n`
   );
@@ -104,21 +108,54 @@ async function scrapeMovieReviews(movieIds) {
           console.log(`   [${i + 1}] ${r.substring(0, 80)}...`)
         );
 
-        // ===== STEP 3: Sentiment Analysis =====
-        const totalScore = reviews.reduce(
-          (acc, r) => acc + sentiment.analyze(r).score,
-          0
+        // ===== STEP 3: Emotion Classification (Naïve Bayes) =====
+        console.log(`\n📊 Classifying emotions...`);
+        const classificationResults = reviews.map((review) =>
+          classifyEmotion(review)
         );
-        const averageScore = totalScore / reviews.length;
-        const emotion =
-          averageScore > 0
-            ? "😊 Joy"
-            : averageScore < 0
-            ? "😢 Sadness"
-            : "😐 Neutral";
+
+        // Display individual emotion classifications
+        classificationResults.forEach((result, i) => {
+          console.log(
+            `   [${i + 1}] ${result.dominantEmotion.toUpperCase()} (intensity: ${result.intensity}, confidence: ${result.confidence})`
+          );
+        });
+
+        // ===== STEP 4: Aggregation =====
+        console.log(`\n🎬 Aggregating emotions across reviews...`);
+        const aggregation = aggregateEmotions(classificationResults);
+
         console.log(
-          `   📊 Sentiment Score: ${averageScore.toFixed(2)} | ${emotion}\n`
+          `   ➤ Dominant emotion: ${aggregation.aggregatedEmotion.toUpperCase()}`
         );
+        console.log(`   ➤ Vote percentage: ${aggregation.votePercentage}%`);
+        console.log(`   ➤ Average intensity: ${aggregation.averageIntensity}`);
+        console.log(
+          `   ➤ Average confidence: ${aggregation.averageConfidence}`
+        );
+        console.log(
+          `   ➤ All votes: ${JSON.stringify(aggregation.allVotes)}\n`
+        );
+
+        // ===== STEP 5: Generate RDF =====
+        const movieTitle = await page.evaluate(() => {
+          const titleElement = document.querySelector("h1");
+          return titleElement ? titleElement.innerText : "Unknown";
+        });
+
+        rdfGenerator.generateMovieEmotionRDF(
+          id,
+          movieTitle,
+          classificationResults,
+          aggregation
+        );
+
+        moviesData.push({
+          id,
+          title: movieTitle,
+          aggregation,
+          classificationResults,
+        });
       } else {
         console.log(`⚠️  No reviews found for movie ${id}`);
       }
@@ -133,7 +170,13 @@ async function scrapeMovieReviews(movieIds) {
   }
 
   await browser.close();
-  console.log("\n✅ Scraping complete!");
+
+  // ===== Write RDF to file =====
+  const outputPath = path.join(__dirname, "..", "movie-emotions.ttl");
+  rdfGenerator.writeToFile(outputPath);
+
+  console.log("\n✅ Scraping and classification complete!");
+  return moviesData;
 }
 
 // ===== MAIN: Orchestrate Both Steps =====
