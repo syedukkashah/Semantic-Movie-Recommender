@@ -1,0 +1,47 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix onyx: <http://www.gsi.dit.upm.es/ontologies/onyx/ns#> .
+@prefix movie: <http://example.org/movie/> .
+@prefix review: <http://example.org/review/> .
+@prefix emotion: <http://example.org/emotion/> .
+
+# ===== EMOTION CLASSIFICATION RESULTS =====
+
+<http://example.org/movie/0123456> a http://www.gsi.dit.upm.es/ontologies/onyx/ns#Movie .
+<http://example.org/movie/0123456> http://www.w3.org/2000/01/rdf-schema#label "Test Movie Title" .
+<http://example.org/emotion/set_0123456> a http://www.gsi.dit.upm.es/ontologies/onyx/ns#AggregatedEmotionSet .
+<http://example.org/movie/0123456> http://www.gsi.dit.upm.es/ontologies/onyx/ns#hasEmotionSet <http://example.org/emotion/set_0123456> .
+<http://example.org/emotion/agg_0123456> a http://www.gsi.dit.upm.es/ontologies/onyx/ns#AggregatedEmotion .
+<http://example.org/emotion/set_0123456> http://www.gsi.dit.upm.es/ontologies/onyx/ns#hasEmotion <http://example.org/emotion/agg_0123456> .
+<http://example.org/emotion/agg_0123456> http://www.gsi.dit.upm.es/ontologies/onyx/ns#hasEmotionCategory <http://www.gsi.dit.upm.es/ontologies/onyx/ns#Joy> .
+<http://example.org/emotion/agg_0123456> http://www.gsi.dit.upm.es/ontologies/onyx/ns#hasEmotionIntensity "1"^^http://www.w3.org/2001/XMLSchema#float .
+<http://example.org/emotion/agg_0123456> http://www.gsi.dit.upm.es/ontologies/onyx/ns#algorithmConfidence "0.9"^^http://www.w3.org/2001/XMLSchema#float .
+<http://example.org/emotion/agg_0123456> http://www.gsi.dit.upm.es/ontologies/onyx/ns#emoticonText "67% of reviews" .
+<http://example.org/emotion/set_0123456> http://www.gsi.dit.upm.es/ontologies/onyx/ns#usesEmotionModel "Naïve Bayes with NRC Lexicon" .
+<http://example.org/emotion/set_0123456> http://www.gsi.dit.upm.es/ontologies/onyx/ns#algorithm "keyword-based classification" .
+<http://example.org/review/0123456_0> a http://www.gsi.dit.upm.es/ontologies/onyx/ns#Review .
+<http://example.org/review/0123456_0> http://www.gsi.dit.upm.es/ontologies/onyx/ns#hasEmotion <http://example.org/emotion/review_0123456_0> .
+<http://example.org/emotion/review_0123456_0> a http://www.gsi.dit.upm.es/ontologies/onyx/ns#Emotion .
+<http://example.org/emotion/review_0123456_0> http://www.gsi.dit.upm.es/ontologies/onyx/ns#hasEmotionCategory <http://www.gsi.dit.upm.es/ontologies/onyx/ns#Joy> .
+<http://example.org/emotion/review_0123456_0> http://www.gsi.dit.upm.es/ontologies/onyx/ns#hasEmotionIntensity "1"^^http://www.w3.org/2001/XMLSchema#float .
+<http://example.org/emotion/review_0123456_0> http://www.gsi.dit.upm.es/ontologies/onyx/ns#algorithmConfidence "0.9"^^http://www.w3.org/2001/XMLSchema#float .
+<http://example.org/emotion/agg_0123456> http://www.gsi.dit.upm.es/ontologies/onyx/ns#aggregatesEmotion <http://example.org/emotion/review_0123456_0> .
+<http://example.org/review/0123456_1> a http://www.gsi.dit.upm.es/ontologies/onyx/ns#Review .
+<http://example.org/review/0123456_1> http://www.gsi.dit.upm.es/ontologies/onyx/ns#hasEmotion <http://example.org/emotion/review_0123456_1> .
+<http://example.org/emotion/review_0123456_1> a http://www.gsi.dit.upm.es/ontologies/onyx/ns#Emotion .
+<http://example.org/emotion/review_0123456_1> http://www.gsi.dit.upm.es/ontologies/onyx/ns#hasEmotionCategory <http://www.gsi.dit.upm.es/ontologies/onyx/ns#Joy> .
+<http://example.org/emotion/review_0123456_1> http://www.gsi.dit.upm.es/ontologies/onyx/ns#hasEmotionIntensity "1"^^http://www.w3.org/2001/XMLSchema#float .
+<http://example.org/emotion/review_0123456_1> http://www.gsi.dit.upm.es/ontologies/onyx/ns#algorithmConfidence "0.9"^^http://www.w3.org/2001/XMLSchema#float .
+<http://example.org/emotion/agg_0123456> http://www.gsi.dit.upm.es/ontologies/onyx/ns#aggregatesEmotion <http://example.org/emotion/review_0123456_1> .
+<http://example.org/review/0123456_2> a http://www.gsi.dit.upm.es/ontologies/onyx/ns#Review .
+<http://example.org/review/0123456_2> http://www.gsi.dit.upm.es/ontologies/onyx/ns#hasEmotion <http://example.org/emotion/review_0123456_2> .
+<http://example.org/emotion/review_0123456_2> a http://www.gsi.dit.upm.es/ontologies/onyx/ns#Emotion .
+<http://example.org/emotion/review_0123456_2> http://www.gsi.dit.upm.es/ontologies/onyx/ns#hasEmotionCategory <http://www.gsi.dit.upm.es/ontologies/onyx/ns#Sadness> .
+<http://example.org/emotion/review_0123456_2> http://www.gsi.dit.upm.es/ontologies/onyx/ns#hasEmotionIntensity "1"^^http://www.w3.org/2001/XMLSchema#float .
+<http://example.org/emotion/review_0123456_2> http://www.gsi.dit.upm.es/ontologies/onyx/ns#algorithmConfidence "0.9"^^http://www.w3.org/2001/XMLSchema#float .
+<http://example.org/emotion/agg_0123456> http://www.gsi.dit.upm.es/ontologies/onyx/ns#aggregatesEmotion <http://example.org/emotion/review_0123456_2> .
+
+# Generated: 2025-12-23T10:50:10.066Z
+# Movies processed: 1
+# Emotions analyzed: 3
