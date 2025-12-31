@@ -1,16 +1,3 @@
-/**
- * PIPELINE STEP 1
- * ----------------
- * JavaScript layer for:
- *  - Querying Wikidata
- *  - Scraping IMDb reviews
- *  - Writing RAW reviews to JSON
- *
- * NO emotion classification
- * NO aggregation
- * NO RDF generation
- */
-
 const axios = require("axios");
 const puppeteer = require("puppeteer");
 const fs = require("fs");
@@ -113,7 +100,7 @@ async function scrapeMovieReviews(movies) {
           }
         });
 
-        return [...new Set(texts)].slice(0, 3);
+        return [...new Set(texts)].slice(0, 10);
       });
 
       console.log(`   ✅ ${reviews.length} reviews collected\n`);
