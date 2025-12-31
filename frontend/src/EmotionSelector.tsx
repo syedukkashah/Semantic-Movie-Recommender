@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
-import { Smile, Frown, Angry, Ghost, Heart, Sparkles } from "lucide-react";
+import { Smile, Frown, Angry, Ghost, Heart, Sparkles, Bomb } from "lucide-react";
 
-export type Emotion = "joy" | "sadness" | "anger" | "fear" | "trust" | "surprise";
+export type Emotion = "joy" | "sadness" | "anger" | "fear" | "disgust" | "trust" | "surprise";
 
 interface EmotionSelectorProps {
   selectedEmotion: Emotion | null;
@@ -13,13 +13,14 @@ const emotions: { id: Emotion; label: string; icon: React.ElementType }[] = [
   { id: "sadness", label: "Sadness", icon: Frown },
   { id: "anger", label: "Anger", icon: Angry },
   { id: "fear", label: "Fear", icon: Ghost },
-  { id: "trust", label: "Trust", icon: Heart },
+  { id: "disgust", label: "Disgust", icon: Bomb },
   { id: "surprise", label: "Surprise", icon: Sparkles },
+  { id: "trust", label: "Trust", icon: Heart },
 ];
 
 export function EmotionSelector({ selectedEmotion, onSelect }: EmotionSelectorProps) {
   return (
-    <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+    <div className="grid grid-cols-3 sm:grid-cols-7 gap-3">
       {emotions.map((emotion) => {
         const Icon = emotion.icon;
         const isSelected = selectedEmotion === emotion.id;

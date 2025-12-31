@@ -35,11 +35,25 @@ class RecommendationEngine:
         movies = self.recommender.get_movies_by_emotion(
             emotion=user_emotion.lower(),
             intensity_threshold=0.0,
-            limit=num_results * 2  # Get extra to rank
+            limit=num_results * 3  # Get extra to rank and deduplicate
         )
         
+        # Filter out "movie reviews" and invalid titles
+        filtered_movies = [
+            m for m in movies 
+            if m['title'] and 'movie reviews' not in m['title'].lower()
+        ]
+        
+        # Deduplicate by movie_id while preserving order
+        seen = set()
+        unique_movies = []
+        for movie in filtered_movies:
+            if movie['movie_id'] not in seen:
+                unique_movies.append(movie)
+                seen.add(movie['movie_id'])
+        
         # Score by similarity to user intensity
-        scored_movies = self._score_by_intensity_match(movies, user_intensity)
+        scored_movies = self._score_by_intensity_match(unique_movies, user_intensity)
         
         return scored_movies[:num_results]
     
@@ -60,11 +74,25 @@ class RecommendationEngine:
         movies = self.recommender.get_movies_by_emotion(
             emotion=desired_emotion.lower(),
             intensity_threshold=0.0,
-            limit=num_results * 2
+            limit=num_results * 3
         )
         
+        # Filter out "movie reviews" and invalid titles
+        filtered_movies = [
+            m for m in movies 
+            if m['title'] and 'movie reviews' not in m['title'].lower()
+        ]
+        
+        # Deduplicate by movie_id
+        seen = set()
+        unique_movies = []
+        for movie in filtered_movies:
+            if movie['movie_id'] not in seen:
+                unique_movies.append(movie)
+                seen.add(movie['movie_id'])
+        
         # Prefer high intensity if going for emotional boost
-        scored_movies = self._score_by_intensity_match(movies, intensity=0.8)
+        scored_movies = self._score_by_intensity_match(unique_movies, intensity=0.8)
         
         return scored_movies[:num_results]
     
@@ -93,21 +121,37 @@ class RecommendationEngine:
             return []
         
         # Get movies for both emotions
-        start_movies = self.recommender.get_movies_by_emotion(start_emotion.lower(), limit=num_results)
-        end_movies = self.recommender.get_movies_by_emotion(end_emotion.lower(), limit=num_results)
+        start_movies = self.recommender.get_movies_by_emotion(start_emotion.lower(), limit=num_results * 2)
+        end_movies = self.recommender.get_movies_by_emotion(end_emotion.lower(), limit=num_results * 2)
+        
+        # Filter and deduplicate
+        all_movies = start_movies + end_movies
+        filtered_movies = [
+            m for m in all_movies 
+            if m['title'] and 'movie reviews' not in m['title'].lower()
+        ]
+        
+        seen = set()
+        unique_movies = []
+        for movie in filtered_movies:
+            if movie['movie_id'] not in seen:
+                unique_movies.append(movie)
+                seen.add(movie['movie_id'])
         
         # Combine and score by transition potential
         journey = []
         
         # Start with a few validating (same emotion as current state)
-        journey.extend(start_movies[:2])
-        
-        # Add transition movies (high confidence from both)
-        for movie in end_movies:
-            if len(journey) < num_results - 1:
+        for movie in unique_movies:
+            if movie['emotion'] == start_emotion.lower() and len(journey) < 2:
                 journey.append(movie)
         
-        return journey
+        # Add transition movies (high confidence from both)
+        for movie in unique_movies:
+            if movie['emotion'] == end_emotion.lower() and len(journey) < num_results:
+                journey.append(movie)
+        
+        return journey[:num_results]
     
     def _score_by_intensity_match(
         self,

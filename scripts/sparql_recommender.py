@@ -35,6 +35,7 @@ class SPARQLRecommender:
     ) -> List[Dict]:
         """
         Find movies with specific emotion category.
+        Returns ONLY the primary emotion for each movie (no duplicates).
         
         Args:
             emotion: Emotion category (joy, sadness, fear, anger, disgust, surprise, trust)
@@ -42,7 +43,7 @@ class SPARQLRecommender:
             limit: Max results
         
         Returns:
-            List of movie dicts with {movie_id, title, director, cast, emotion, intensity, confidence}
+            List of movie dicts with {movie_id, title, director, cast, emotion, intensity, confidence, description}
         """
         
         emotion_uri = ONYX[emotion.capitalize()]
@@ -57,7 +58,7 @@ class SPARQLRecommender:
         
         SELECT ?movieId ?title ?director 
                ?cast0 ?cast1 ?cast2
-               ?intensity ?confidence
+               ?intensity ?confidence ?description
         WHERE {{
             ?movie a onyx:Movie ;
                 rdfs:label ?title ;
@@ -72,17 +73,30 @@ class SPARQLRecommender:
             OPTIONAL {{ ?movie dbpedia:cast_member_0 ?cast0 }}
             OPTIONAL {{ ?movie dbpedia:cast_member_1 ?cast1 }}
             OPTIONAL {{ ?movie dbpedia:cast_member_2 ?cast2 }}
+            OPTIONAL {{ ?movie rdfs:comment ?description }}
+            OPTIONAL {{ ?movie dbpedia:abstract ?description }}
             
             BIND(STRAFTER(STR(?movie), "movie/") AS ?movieId)
             
             FILTER (?intensity >= {intensity_threshold})
+            FILTER (?title != "User reviews" && ?title != "movie reviews")
         }}
         ORDER BY DESC(?intensity) DESC(?confidence)
         LIMIT {limit}
         """
         
         results = []
+        seen_movies = set()
+        
         for row in self.graph.query(query):
+            movie_id = str(row.movieId)
+            
+            # Skip if we've already seen this movie (ensures no duplicates)
+            if movie_id in seen_movies:
+                continue
+            
+            seen_movies.add(movie_id)
+            
             cast = []
             if row.cast0:
                 cast.append(str(row.cast0))
@@ -91,14 +105,21 @@ class SPARQLRecommender:
             if row.cast2:
                 cast.append(str(row.cast2))
             
+            description = ""
+            if row.description:
+                desc_str = str(row.description)
+                # Limit description to 150 characters
+                description = desc_str[:150] + "..." if len(desc_str) > 150 else desc_str
+            
             results.append({
-                'movie_id': str(row.movieId),
+                'movie_id': movie_id,
                 'title': str(row.title),
                 'director': str(row.director) if row.director else 'Unknown',
                 'cast': cast,
                 'emotion': emotion,
                 'intensity': float(row.intensity),
-                'confidence': float(row.confidence)
+                'confidence': float(row.confidence),
+                'description': description
             })
         
         return results
