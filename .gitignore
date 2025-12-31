@@ -1,2 +1,4 @@
 # .gitignore file content
 node_modules
+__pycache__/
+*.pyc
